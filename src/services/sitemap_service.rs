@@ -86,7 +86,7 @@ impl SitemapService {
                 continue;
             }
             urls.push(SitemapUrl {
-                loc: format!("{}/{}/", self.site.url, post.url),
+                loc: format!("{}/post/{}/", self.site.url, post.url),
                 lastmod: Self::format_datetime(post.front_matter.date),
                 priority: self.site.priority.clone(),
             });

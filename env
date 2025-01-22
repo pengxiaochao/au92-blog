@@ -1,0 +1,17 @@
+# 服务器配置
+SERVER_HOST=127.0.0.1
+SERVER_PORT=4000
+
+# 日志级别 (TRACE, DEBUG, INFO, WARN, ERROR)
+LOG_LEVEL=DEBUG
+
+# 网站名称
+SITE_TITLE="P.X.C"
+# 网站链接
+SITE_URL=http://127.0.0.1:4000
+# sitemap url 权重
+PRIORITY=0.5
+
+KEYWORDS="Java, 思想, 学习, 总结, Rust"
+DESCRIPTION=不动笔墨不读书
+AUTHOR=pengxiaochao

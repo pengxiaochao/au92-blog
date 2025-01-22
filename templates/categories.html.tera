@@ -1,0 +1,21 @@
+{% extends "layout.html.tera" %}
+
+{% block content %}
+<div class="terms">
+    <div class="terms-title">
+        共计 {{count}} 个分类
+    </div>
+    <div class="terms-tags">
+        {% for category in categories %}
+        <a class="terms-link" href="/categories/{{category.name}}/">
+            {{category.name}}
+            <span class="terms-count">{{category.count}}</span>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block page_title %}
+分类 -
+{% endblock page_title %}

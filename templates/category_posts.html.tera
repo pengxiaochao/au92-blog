@@ -1,0 +1,42 @@
+{% extends "layout.html.tera" %}
+
+{% block content %}
+<section id="archive" class="archive">
+    <div class="archive-title category">
+        <h2 class="archive-name">{{ category_name }}</h2>
+    </div>
+    {% for post in posts %}
+    <div class="archive-post">
+        <span class="archive-post-time">
+            {{ post.front_matter.date | date(format="%Y-%m-%d") }}
+        </span>
+        <span class="archive-post-title">
+            <a href="/post/{{ post.url }}/" class="archive-post-link">{{ post.front_matter.title}}</a>
+        </span>
+    </div>
+    {% endfor %}
+</section>
+
+<!-- pagination -->
+<nav class="pagination">
+    {% if page.prev %}
+    <a class="prev" href="/categories/{{ category_name }}/page/{{ page.prev }}/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text">上一页</span>
+    </a>
+    {% endif %}
+    {% if page.next %}
+    <a class="next" href="/categories/{{ category_name }}/page/{{ page.next }}/">
+        <span class="next-text">下一页</span>
+        <i class="iconfont icon-right"></i>
+    </a>
+    {% endif %}
+</nav>
+{% endblock content %}
+
+{% block page_title %}
+{% if site_title %}
+{{ site_title }}
+{% endif %}
+{{ category_name }} -
+{% endblock page_title %}

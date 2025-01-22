@@ -1,0 +1,97 @@
+{% extends "layout.html.tera" %}
+
+{% block content %}
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">{{ post.front_matter.title }}</h1>
+        <div class="post-meta">
+            <span class="post-time">{{ post.front_matter.date | date(format="%Y-%m-%d %H:%M") }}</span>
+            {% if post.front_matter.categories %}
+            {% for category in post.front_matter.categories %}
+            <div class="post-category">
+                <a href="/categories/{{ category }}/">{{ category }}</a>
+            </div>
+            {% endfor %}
+            {% endif %}
+            <span class="more-meta">约 {{ post.count }} 字</span>
+            <span class="more-meta">预计阅读 {{ post.read_time }} 分钟</span>
+        </div>
+    </header>
+
+    {% if post.toc and post.toc | length > 0 %}
+    <div class="post-toc" id="post-toc">
+        <h2 class="post-toc-title">文章目录</h2>
+        <div class="post-toc-content">
+            <nav id="TableOfContents">
+                {% set prev_level = 1 %}
+                <ul>
+                    {% for item in post.toc %}
+                    {% if item.0 == 2 %}
+                        {% if prev_level == 3 %}</ul>{% endif %}
+                        {% if prev_level != 1 %}</li>{% endif %}
+                        <li><a href="#{{ item.2 }}">{{ item.1 }}</a>
+                        {% set_global prev_level = 2 %}
+                    {% endif %}
+                    {% if item.0 == 3 %}
+                        {% if prev_level == 2 %}<ul>{% endif %}
+                        <li><a href="#{{ item.2 }}">{{ item.1 }}</a></li>
+                        {% set_global prev_level = 3 %}
+                    {% endif %}
+                    {% endfor %}
+                    {% if prev_level == 3 %}</ul>{% endif %}
+                    {% if prev_level != 1 %}</li>{% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+    <!-- Content -->
+    <div class="post-content">
+        {{ post.content }}
+    </div>
+    <div class="post-copyright">
+        <p class="copyright-item">
+            <span class="item-title">文章作者</span>
+            <span class="item-content">{{ site.author }}</span>
+        </p>
+        <p class="copyright-item">
+            <span class="item-title">上次更新</span>
+            <span class="item-content">{{ post.front_matter.date | date(format="%Y-%m-%d") }}</span>
+        </p>
+        <p class="copyright-item">
+            <span class="item-title">许可协议</span>
+            <span class="item-content">不允许任何形式转载。</span>
+        </p>
+    </div>
+
+    <footer class="post-footer">
+        {% if post.front_matter.tags %}
+        <div class="post-tags">
+            {% for tag in post.front_matter.tags %}
+            <a href="/tags/{{ tag }}/">{{ tag }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Post Pagination -->
+        <nav class="post-nav">
+            {% if post.prev %}
+            <a class="prev" href="/post/{{ post.prev.url }}/">
+                <i class="iconfont icon-left"></i>
+                <span class="prev-text nav-default">{{ post.prev.front_matter.title }}</span>
+                <span class="prev-text nav-mobile">上一篇</span>
+            </a>
+            {% endif %}
+            {% if post.next %}
+            <a class="next" href="/post/{{ post.next.url }}/">
+                <span class="next-text nav-default">{{ post.next.front_matter.title }}</span>
+                <span class="next-text nav-mobile">下一篇</span>
+                <i class="iconfont icon-right"></i>
+            </a>
+            {% endif %}
+        </nav>
+    </footer>
+</article>
+{% endblock content %}
+
+{% block page_title %}{{ post.front_matter.title }} - {% endblock page_title %}

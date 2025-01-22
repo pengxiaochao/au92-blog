@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>
+        {% block page_title %}{% endblock page_title %}{{ site.title }} - 好好学数学
+    </title>
+    {% include "head.html.tera" %}
+</head>
+<body>
+    {% include "slideout.html.tera" %}
+    <div class="container" id="mobile-panel">
+        <header id="header" class="header">
+            {% include "header.html.tera" %}
+        </header>
+        <main id="main" class="main">
+            <div class="content-wrapper">
+                <div id="content" class="content">
+                {% block content %}{% endblock content %}
+                </div>
+            </div>
+        </main>
+        <footer id="footer" class="footer">
+            {% include "footer.html.tera" %}
+        </footer>
+        <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+        </div>
+    </div>
+    {% include "script.html.tera" %}
+</body>
+</html>

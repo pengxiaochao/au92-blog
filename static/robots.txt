@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: http://www.au92.com/sitemap.xml

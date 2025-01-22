@@ -1,0 +1,12 @@
+<div class="logo-wrapper">
+  <a href="/" class="logo">{{ site.title }}</a>
+</div>
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    {% for menu in site.menus %}
+      <li class="menu-item">
+        <a class="menu-item-link" href="{{ menu.url }}">{{ menu.name }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+</nav>

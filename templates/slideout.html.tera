@@ -1,0 +1,19 @@
+<div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">{{ site.title }}</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    {% for menu in site.menus %}
+      <a href="{{ menu.url }}">
+        <li class="mobile-menu-item">{{ menu.name }}</li>
+      </a>
+    {% endfor %}
+  </ul>
+</nav>

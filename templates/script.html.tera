@@ -1,0 +1,13 @@
+<script type="text/javascript" src="/static/lib/jquery/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="/static/lib/slideout/slideout-1.0.1.min.js"></script>
+<script type="text/javascript" src="/static/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+<script type="text/javascript" src="/static/js/main.min.c99b103c33d1539acf3025e1913697534542c4a5aa5af0ccc20475ed2863603b.js"></script>
+<script>
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?dcdfb235bad67c5e0dd3a7aeade57920";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>

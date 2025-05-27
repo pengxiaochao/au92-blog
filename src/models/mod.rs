@@ -19,6 +19,7 @@ pub mod rss;
 pub mod sitemap;
 pub mod archive;
 pub mod page;
+pub mod friend;
 
 // 导出常用类型，方便其他模块使用
 pub use post::Post;
@@ -30,3 +31,4 @@ pub use rss::{RssItem, RssFeed};
 pub use sitemap::{Sitemap,SitemapUrl};
 pub use archive::{Archive,ArchivePost};
 pub use page::Page;
+pub use friend::FriendLink;

@@ -21,6 +21,9 @@ pub mod archive;
 pub mod post;
 /// 刷新文章缓存处理模块
 pub mod refresh;
+pub mod upload;
+/// 友链相关处理模块
+pub mod friends;
 
 // 导出处理函数，使其可以在其他模块中直接使用
 pub use archive::archive_posts;
@@ -30,3 +33,5 @@ pub use refresh::refresh_posts;
 pub use rss::rss_feed;
 pub use sitemap::sitemap_xml;
 pub use tag::{tag_posts, tag_posts_with_page, tags_index};
+pub use upload::upload_file;
+pub use friends::render_friend_links;

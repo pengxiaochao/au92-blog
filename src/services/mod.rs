@@ -20,6 +20,10 @@ pub mod template_service;
 pub mod rss_service;
 /// Sitemap服务模块，提供站点地图功能
 pub mod sitemap_service;
+/// 上传服务模块，提供文件上传功能
+pub mod upload_service;
+/// 友链服务模块，提供友链的加载和渲染功能
+pub mod friend_service;
 
 // 导出服务结构体，方便其他模块使用
 pub use post_service::PostService;
@@ -28,3 +32,5 @@ pub use category_service::CategoryService;
 pub use template_service::TemplateService;
 pub use rss_service::RssService;
 pub use sitemap_service::SitemapService;
+pub use upload_service::UploadService;
+pub use friend_service::FriendLinkService;

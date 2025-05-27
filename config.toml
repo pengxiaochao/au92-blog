@@ -18,3 +18,8 @@
   weight = 40
   identifier = "categories"
   url = "/categories/"
+[[menu.main]]
+  name = "友情链接"
+  weight = 40
+  identifier = "friends"
+  url = "/friends/"

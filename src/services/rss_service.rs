@@ -50,7 +50,7 @@ impl RssService {
         // 获取所有文章，转换为RSS项目格式
         let items: Vec<RssItem> = posts
             .iter()
-            .filter(|p| p.front_matter.draft == false)
+            .filter(|p| !p.front_matter.draft)
             // .take(self.site.rss_count)
             .map(|post| RssItem {
                 title: post.front_matter.title.clone(),

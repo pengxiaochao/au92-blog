@@ -1,0 +1,11 @@
+<div class="footnotes" role="doc-endnotes">
+    <hr>
+    <h2>相似文章</h2>
+    <ol>
+      {% for random in post.random_posts %}
+       <li id="fn:{{loop.index}}">
+            <p><a href="/post/{{ random.url }}/">{{ random.front_matter.title }}</a></p>
+        </li>
+        {% endfor %}
+    </ol>
+</div>

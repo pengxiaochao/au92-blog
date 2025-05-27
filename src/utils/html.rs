@@ -24,8 +24,7 @@ pub fn strip_html_tags(html: &str) -> Result<String> {
 /// 转义所有html 标签，防止XSS攻击
 /// 参数:
 /// - html: HTML格式的字符串
-/// 返回:
-/// - 转义后的HTML字符串
+/// 返回: 转义后的HTML字符串
 pub fn escape_html(html: &str) -> String {
     let mut result = String::new();
     for c in html.chars() {

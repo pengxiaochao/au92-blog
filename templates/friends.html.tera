@@ -1,0 +1,22 @@
+{% extends "layout.html.tera" %}
+
+{% block content %}
+<div class="friends-list">
+    这里是我的一些朋友网站，欢迎交换链接～
+    <ul>
+      {% for item in friends %}
+      <li class="friend-item">
+        <a href="{{ item.url }}" target="_blank">
+          <img src="{{ item.avatar }}" alt="{{ item.name }} 的头像" />
+          <div class="info">
+            <strong>{{ item.name }}</strong>
+            <p>{{ item.desc }}</p>
+          </div>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock content %}
+
+{% block page_title %}友情链接 - {% endblock page_title %}

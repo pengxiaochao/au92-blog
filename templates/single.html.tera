@@ -49,6 +49,8 @@
     <div class="post-content">
         {{ post.content }}
     </div>
+    <!--随机文章-->
+    {% include "random.html.tera" %}
     <div class="post-copyright">
         <p class="copyright-item">
             <span class="item-title">文章作者</span>

@@ -1,3 +1,4 @@
+use anyhow::Result;
 use axum::{middleware as axum_middleware, Router};
 use dotenv::dotenv;
 use models::Site;
@@ -5,8 +6,8 @@ use services::{
     CategoryService, PostService, RssService, SitemapService, TagService, TemplateService,
 };
 use std::{net::SocketAddr, sync::Arc};
+use tower_http::trace::TraceLayer;
 use tracing::Level;
-use anyhow::Result;
 
 mod config;
 mod db;
@@ -19,7 +20,7 @@ mod services;
 mod utils;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<()> {
     // 加载环境变量
     dotenv().ok();
     // 从环境变量加载站点配置
@@ -57,6 +58,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Arc::clone(&category_service),
         site,
     ));
+    let upload_service = Arc::new(services::UploadService::new());
+    let friend_service = Arc::new(services::FriendLinkService::new(
+        Arc::clone(&template_service),
+    ));
 
     // 初始化文章缓存
     post_service.load_all_posts().await?;
@@ -68,8 +73,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             rss_service,
             sitemap_service,
             post_service,
+            upload_service,
+            friend_service,
         ))
-        .layer(axum_middleware::from_fn(middleware::logging));
+        .layer(axum_middleware::from_fn(middleware::logging))
+        .layer(TraceLayer::new_for_http());
 
     // 从环境变量获取服务器配置
     let host = std::env::var("SERVER_HOST").unwrap_or_else(|_| "127.0.0.1".to_string());

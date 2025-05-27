@@ -1,10 +1,15 @@
 /// 路由模块 - 负责处理所有HTTP路由配置和请求分发
-use crate::services::{CategoryService, PostService, RssService, SitemapService};
+use crate::services::{CategoryService, PostService, RssService, SitemapService, UploadService,FriendLinkService};
 use crate::{handlers, services::TagService};
 use axum::routing::get_service;
-use axum::{routing::get, Router};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 use std::sync::Arc;
 use tower_http::services::ServeDir;
+
+
 /// 应用程序共享状态
 /// 包含所有服务实例，通过 Arc 实现线程安全的共享
 /// 在请求处理过程中可以访问这些服务
@@ -20,6 +25,10 @@ pub struct AppState {
     pub sitemap_service: Arc<SitemapService>,
     /// 文章服务实例：处理文章的加载和管理
     pub post_service: Arc<PostService>,
+    /// 上传服务实例：处理文件上传功能
+    pub upload_service: Arc<UploadService>,
+    /// 友链服务实例：处理友链的加载和渲染
+    pub friend_service: Arc<FriendLinkService>,
 }
 
 /// 创建并配置应用路由系统
@@ -45,6 +54,8 @@ pub fn create_router(
     rss_service: Arc<RssService>,
     sitemap_service: Arc<SitemapService>,
     post_service: Arc<PostService>,
+    upload_service: Arc<UploadService>,
+    friend_service: Arc<FriendLinkService>,
 ) -> Router {
     // 创建应用状态实例
     let state = AppState {
@@ -53,24 +64,37 @@ pub fn create_router(
         rss_service,
         sitemap_service,
         post_service,
+        upload_service,
+        friend_service,
     };
 
     // 构建路由表
     // 使用 axum 的 Router 来定义所有路由规则
     Router::new()
+        // 友链相关路由
+        .route("/friends/", get(handlers::render_friend_links))
+        .route("/upload/", post(handlers::upload_file))
         // 文章相关路由 - 注意顺序调整
         .route("/post/page/{page}/", get(handlers::archive_posts))
         .route("/post/", get(handlers::archive_posts))
         .route("/post/{url}/", get(handlers::post_detail))
+        .route("/post/{url}", get(handlers::post_detail))
         .route("/post/{url}/index.html", get(handlers::post_detail))
         // 分类相关路由
         .route("/categories/", get(handlers::categories_index))
-        .route("/categories/{category}/page/{page}/", get(handlers::category_posts_with_page))
+        .route(
+            "/categories/{category}/page/{page}/",
+            get(handlers::category_posts_with_page),
+        )
         .route("/categories/{category}/", get(handlers::category_posts))
         // 标签相关路由
         .route("/tags/", get(handlers::tags_index))
-        .route("/tags/{tag}/page/{page}/", get(handlers::tag_posts_with_page))
+        .route(
+            "/tags/{tag}/page/{page}/",
+            get(handlers::tag_posts_with_page),
+        )
         .route("/tags/{tag}/", get(handlers::tag_posts))
+        .route("/tags/{tag}", get(handlers::tag_posts))
         // 站点功能路由
         .route("/index.xml", get(handlers::rss_feed))
         .route("/sitemap.xml", get(handlers::sitemap_xml))

@@ -5,6 +5,7 @@ use crate::models::{Archive, ArchivePost, FrontMatter, Post};
 use anyhow::Result;
 use chrono::Datelike;
 use once_cell::sync::Lazy;
+use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 use std::{path::Path, sync::Arc};
 use tera::Context;
@@ -37,10 +38,10 @@ pub struct PostService {
 pub struct PostSummary {
     pub front_matter: FrontMatter, // 文章元数据，包含标题、日期等信息
     pub content: String,           // 文章完整内容
-    pub url: String,              // 文章访问地址
-    pub summary: String,          // 文章摘要内容
-    pub count: usize,             // 文章字数统计
-    pub read_time: u16,           // 预估阅读时间（分钟）
+    pub url: String,               // 文章访问地址
+    pub summary: String,           // 文章摘要内容
+    pub count: usize,              // 文章字数统计
+    pub read_time: u16,            // 预估阅读时间（分钟）
 }
 
 /// 单篇文章详情结构体，用于文章详情页展示
@@ -55,6 +56,7 @@ pub struct SinglePost {
     pub toc: Vec<(usize, String, String)>, // 文章目录结构：(层级, 标题, ID)
     pub prev: Option<Post>,                // 上一篇文章
     pub next: Option<Post>,                // 下一篇文章
+    pub random_posts: Vec<Post>,           // 随机推荐文章列表
 }
 
 impl PostService {
@@ -89,11 +91,11 @@ impl PostService {
             .load_all_posts()
             .await?
             .into_iter()
-            .filter(|p| p.front_matter.draft == false);
+            .filter(|p| !p.front_matter.draft);
         // 使用count()获取过滤后的数量
         let len = all_posts.clone().count();
         let posts: Vec<PostSummary> = all_posts
-            .skip((page-1) * per_page)
+            .skip((page - 1) * per_page)
             .take(per_page)
             .map(|post| {
                 let summary = post.generate_description(200);
@@ -203,7 +205,6 @@ impl PostService {
         }
     }
 
-
     /// 刷新文章缓存
     /// # 功能说明
     /// - 从文件系统加载并解析文章信息，然后更新缓存
@@ -237,11 +238,8 @@ impl PostService {
         if page.current > 1 {
             context.insert("site_title", &format!("第{}页 - ", page.current));
         }
-        Ok(self
-            .template_service
-            .render("archives.html.tera", &context)?)
+        self.template_service.render("archives.html.tera", &context)
     }
-
 
     /// 获取单篇文章
     ///
@@ -260,7 +258,7 @@ impl PostService {
         // 过滤出非草稿文章
         let published_posts: Vec<Post> = posts
             .into_iter()
-            .filter(|p| p.front_matter.draft == false)
+            .filter(|p| !p.front_matter.draft)
             .collect();
 
         // 查找当前文章的索引
@@ -281,6 +279,8 @@ impl PostService {
                 None
             };
 
+            let random_posts = self.get_random_post(url).await?;
+
             // 构造SinglePost对象
             Ok(Some(SinglePost {
                 front_matter: current_post.front_matter.clone(),
@@ -292,12 +292,35 @@ impl PostService {
                 toc: current_post.generate_toc(),
                 prev,
                 next,
+                random_posts,
             }))
         } else {
             Ok(None)
         }
     }
 
+    /// 获取随机文章列表
+    ///
+    /// # 功能说明
+    /// - 从已加载的文章列表中随机选择5篇非草稿状态的文章
+    /// # 参数
+    /// * `url` - 当前文章的URL，用于过滤
+    /// # 返回值
+    /// * `Result<Vec<Post>>` - 随机选择的5篇文章列表
+    async fn get_random_post(&self, url: &str) -> Result<Vec<Post>> {
+        // 获取所有文章，过滤当前url文章，返回随机5篇文章
+        let posts = self.load_all_posts().await?;
+        let mut rng = rand::rng();
+        let mut filtered_posts: Vec<Post> = posts
+            .into_iter()
+            .filter(|p| !p.front_matter.draft && p.url != url)
+            .collect();
+        // 随机打乱文章列表
+        filtered_posts.shuffle(&mut rng);
+        // 取前5篇文章
+        let random_posts: Vec<Post> = filtered_posts.into_iter().take(5).collect();
+        Ok(random_posts)
+    }
 
     /// 加载并解析单个Markdown文章文件
     ///
@@ -382,7 +405,7 @@ impl PostService {
             .load_all_posts()
             .await?
             .into_iter()
-            .filter(|p| p.front_matter.draft == false);
+            .filter(|p| !p.front_matter.draft);
 
         // 使用count()获取过滤后的数量
         let len = posts.clone().count();

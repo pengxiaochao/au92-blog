@@ -50,9 +50,9 @@ impl CategoryService {
         let categories = self.get_all_categories().await;
         context.insert("categories", &categories);
         context.insert("count", &categories.len());
-        Ok(self
+        self
             .template_service
-            .render("categories.html.tera", &context)?)
+            .render("categories.html.tera", &context)
     }
 
     /// 获取所有分类及其对应的文章数量
@@ -65,7 +65,7 @@ impl CategoryService {
                 // 使用 HashMap 统计每个分类的文章数量
                 let mut category_counts = HashMap::new();
                 // 遍历所有文章，统计每个分类的文章数
-                for post in posts.into_iter().filter(|p| p.front_matter.draft == false) {
+                for post in posts.into_iter().filter(|p| !p.front_matter.draft) {
                     if let Some(categories) = post.front_matter.categories {
                         for category in categories {
                             *category_counts.entry(category).or_insert(0) += 1;
@@ -116,9 +116,8 @@ impl CategoryService {
         if page.current > 1 {
             context.insert("site_title", &format!("第{}页 - ", page.current));
         }
-        Ok(self
-            .template_service
-            .render("category_posts.html.tera", &context)?)
+        self.template_service
+            .render("category_posts.html.tera", &context)
     }
 
     /// 获取指定分类下的所有文章
@@ -133,7 +132,7 @@ impl CategoryService {
                 // 筛选出属于指定分类的文章
                 datas
                     .into_iter()
-                    .filter(|post| post.front_matter.draft == false)
+                    .filter(|post| !post.front_matter.draft)
                     .filter(|post| {
                         post.front_matter
                             .categories
